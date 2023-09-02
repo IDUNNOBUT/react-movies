@@ -5,7 +5,7 @@ import {ROUTES} from "../../routes";
 import {Header} from "../Header/Header";
 import {Box, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {Footer} from "../Footer";
-
+import {SearchProvider} from '../../context/searchContext'
 function App() {
     const [mode, setMode] = useState(localStorage.getItem('mode') || 'light');
     const routes = useRoutes(ROUTES);
@@ -33,6 +33,7 @@ function App() {
     useEffect(() => localStorage.setItem('mode', mode), [mode]);
     return (
         <ThemeProvider theme={theme}>
+            <SearchProvider>
             <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100dvh'}}>
                 <CssBaseline/>
                 <Header callback={changeTheme} mode={mode}/>
@@ -50,6 +51,7 @@ function App() {
                 </Box>
                 <Footer/>
             </Box>
+            </SearchProvider>
         </ThemeProvider>
     );
 }

@@ -1,39 +1,35 @@
-import {React, useState} from 'react';
+import {React, useContext, useState} from 'react';
 import {FilmsList} from "../../components/FilmsList/FilmsList";
 import {SearchBar} from "../../components/SearchBar";
 import {useSearchFilmsQuery} from "../../api/FilmsApi/FilmsApi";
 import {Filter} from "../../components/Filter";
 import {Pagination, PaginationItem, Skeleton} from "@mui/material";
-import {NavLink, useSearchParams} from "react-router-dom";
+import {NavLink} from "react-router-dom";
+import {SearchContext} from "../../context/searchContext";
 
 const Home = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const [searchQuery, setSearchQuery] = useState(searchParams.get('s') || 'matrix');
-    const [filterQuery, setFilterQuery] = useState(searchParams.get('f') || 'all');
-    const {data, currentData, isFetching, error} = useSearchFilmsQuery({search: searchQuery, type: filterQuery, page});
+    const {params:{s,f,page},setSearchParams} = useContext(SearchContext);
+    const {data, currentData, isFetching, error} = useSearchFilmsQuery({search: s, type: f, page: page});
 
     return (
         <div>
             <SearchBar handleSubmit={(query) => {
-                setSearchQuery(query);
-                setSearchParams({s: query,page:1, f: filterQuery});
+                setSearchParams({s: query,page:1, f});
             }}/>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))'}}>
                 <Filter handleChange={(filter) => {
-                    setFilterQuery(filter);
-                    setSearchParams({s: searchQuery,page:1, f: filter})
-                }} filter={filterQuery}/>
+                    setSearchParams({s,page:1, f: filter})
+                }} filter={f}/>
                 {currentData?.totalResults || data?.totalResults ?
                     <Pagination sx={{marginY: '.5rem'}}
-                                page={page}
+                                page={+page}
                                 count={Math.ceil((+currentData?.totalResults || +data?.totalResults) / 10) || 10}
                                 renderItem={(item) => (
                                     <PaginationItem
                                         component={NavLink}
                                         to={{
                                             pathname: '',
-                                            search: `?s=${searchQuery}${item.page === 1 ? '' : `&page=${item.page}&f=${filterQuery}`}`
+                                            search: `?s=${s}&page=${item.page}&f=${f}`
                                         }}
                                         {...item}
                                     />
