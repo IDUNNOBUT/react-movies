@@ -1,4 +1,4 @@
-import {React, useContext, useState} from 'react';
+import {React} from 'react';
 import {FilmsList} from "../../components/FilmsList/FilmsList";
 import {SearchBar} from "../../components/SearchBar";
 import {useSearchFilmsQuery} from "../../api/FilmsApi/FilmsApi";
